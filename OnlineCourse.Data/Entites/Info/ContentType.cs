@@ -6,4 +6,6 @@ namespace OnlineCourse.Data.Entites;
 [Index(nameof(Code), IsUnique = true)]
 public class ContentType : BaseInfoEntity
 {
+    [InverseProperty(nameof(Content.ContentType))]
+    public List<Content>? Contents { get; set; }
 }

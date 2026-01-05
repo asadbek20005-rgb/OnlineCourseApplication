@@ -66,5 +66,8 @@ public class User : BaseDateTime
     public Content Content { get; set; } = null!;
 
     [InverseProperty(nameof(UserCourse.User))]
-    public List<UserCourse>? UserCourses { get; set; }  
+    public List<UserCourse>? UserCourses { get; set; }
+
+    [InverseProperty(nameof(Review.User))]
+    public List<Review>? Reviews { get; set; }
 }

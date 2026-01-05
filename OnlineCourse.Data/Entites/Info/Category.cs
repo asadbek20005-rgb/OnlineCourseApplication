@@ -8,4 +8,7 @@ public class Category : BaseInfoEntity
 {
     [InverseProperty(nameof(Course.Category))]
     public List<Course>? Courses { get; set; }
+
+    [InverseProperty(nameof(Article.Category))]
+    public List<Article>? Articles { get; set; } 
 }

@@ -21,7 +21,7 @@ public class Course : BaseDateTime
     public int PhotoContentId { get; set; }
 
     [Column("level_id")]
-    public int LevelId { get; set; }    
+    public int LevelId { get; set; }
 
     // Main Properites
 
@@ -50,4 +50,14 @@ public class Course : BaseDateTime
 
     [ForeignKey(nameof(LevelId))]
     public Level Level { get; set; } = null!;
+
+    [InverseProperty(nameof(Lesson.Course))]
+    public List<Lesson>? Lessons { get; set; }
+
+    [InverseProperty(nameof(Comment.Course))]
+    public List<Comment>? Comments { get; set; }
+
+    [InverseProperty(nameof(Review.Course))]
+    public List<Review>? Reviews { get; set; }
+
 }

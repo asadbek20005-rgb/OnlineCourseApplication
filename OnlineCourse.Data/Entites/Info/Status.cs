@@ -11,5 +11,8 @@ public class Status : BaseInfoEntity
 
     [InverseProperty(nameof(Course.Status))]
     public List<Course>? Courses { get; set; }
+
+    [InverseProperty(nameof(Lesson.Status))]
+    public List<Lesson>? Lessons { get; set; }
 }
 
