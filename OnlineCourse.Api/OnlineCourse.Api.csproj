@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\Admin\Base\" />
+    <Folder Include="Controllers\Admin\Child\" />
+    <Folder Include="Controllers\Instructor\Base\" />
+    <Folder Include="Controllers\Instructor\Child\" />
+    <Folder Include="Controllers\Student\Base\" />
+    <Folder Include="Controllers\Student\Child\" />
+  </ItemGroup>
+
+</Project>
