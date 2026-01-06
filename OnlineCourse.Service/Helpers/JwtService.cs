@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using OnlineCourse.Common.Dtos;
@@ -10,9 +11,9 @@ using System.Text;
 
 namespace OnlineCourse.Service.Helpers;
 
-public class JwtService(IOptions<JwtSetting> settings) : IJwtService
+public class JwtService(IConfiguration configuration) : IJwtService
 {
-    private readonly JwtSetting _jwtSetting = settings.Value;
+    private readonly JwtSetting _jwtSetting = configuration.GetSection("JwtSettings").Get<JwtSetting>()!;
     public TokenDto GenerateToken(User user, bool populateExp)
     {
         var key = Encoding.UTF32.GetBytes(_jwtSetting.Key);
@@ -22,7 +23,6 @@ public class JwtService(IOptions<JwtSetting> settings) : IJwtService
         {
             new (ClaimTypes.Name, user.Username!),
             new (ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new (ClaimTypes.Role, user.Role?.ShortName!),
             new (ClaimTypes.GivenName, $"{user.FirstName} {user.LastName}"),
             new Claim("role_id", user.RoleId.ToString())
         };
@@ -40,7 +40,7 @@ public class JwtService(IOptions<JwtSetting> settings) : IJwtService
         {
             var refreshToken = GenerateRefreshToken();
             user.RefreshToken = refreshToken;
-            user.RefreshTokenExpireTime = DateTime.Now.AddDays(7);
+            user.RefreshTokenExpireTime = DateTime.UtcNow.AddDays(7);
         }
 
 

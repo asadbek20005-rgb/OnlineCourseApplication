@@ -25,4 +25,7 @@ public interface IUnitOfWork
 
     IDbContextTransaction BeginTransaction();
 
+    Task SaveChangesAsync();
+
+
 }

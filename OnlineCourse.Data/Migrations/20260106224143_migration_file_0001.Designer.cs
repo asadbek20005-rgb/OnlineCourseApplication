@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OnlineCourse.Data.Contexts;
@@ -11,9 +12,11 @@ using OnlineCourse.Data.Contexts;
 namespace OnlineCourse.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260106224143_migration_file_0001")]
+    partial class migration_file_0001
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,8 +42,7 @@ namespace OnlineCourse.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid?>("CreatedUserId")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("created_user_id");
 
@@ -92,8 +94,7 @@ namespace OnlineCourse.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid?>("CreatedUserId")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("created_user_id");
 
@@ -154,8 +155,7 @@ namespace OnlineCourse.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid?>("CreatedUserId")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("created_user_id");
 
@@ -210,8 +210,7 @@ namespace OnlineCourse.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid?>("CreatedUserId")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("created_user_id");
 
@@ -267,8 +266,7 @@ namespace OnlineCourse.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid?>("CreatedUserId")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("created_user_id");
 
@@ -325,8 +323,7 @@ namespace OnlineCourse.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid?>("CreatedUserId")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("created_user_id");
 
@@ -375,8 +372,7 @@ namespace OnlineCourse.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid?>("CreatedUserId")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("created_user_id");
 
@@ -442,8 +438,7 @@ namespace OnlineCourse.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid?>("CreatedUserId")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("created_user_id");
 
@@ -478,8 +473,7 @@ namespace OnlineCourse.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid?>("CreatedUserId")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("created_user_id");
 
@@ -530,8 +524,7 @@ namespace OnlineCourse.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid?>("CreatedUserId")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("created_user_id");
 
@@ -583,8 +576,7 @@ namespace OnlineCourse.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid?>("CreatedUserId")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("created_user_id");
 
@@ -633,8 +625,7 @@ namespace OnlineCourse.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid?>("CreatedUserId")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("created_user_id");
 
@@ -685,8 +676,7 @@ namespace OnlineCourse.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid?>("CreatedUserId")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("created_user_id");
 
@@ -735,8 +725,7 @@ namespace OnlineCourse.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid?>("CreatedUserId")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("created_user_id");
 
@@ -783,8 +772,7 @@ namespace OnlineCourse.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid?>("CreatedUserId")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("created_user_id");
 
@@ -816,14 +804,15 @@ namespace OnlineCourse.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("password_hash");
 
-                    b.Property<int?>("PhotoContentId")
+                    b.Property<int>("PhotoContentId")
                         .HasColumnType("integer")
                         .HasColumnName("photo_content_id");
 
                     b.Property<string>("RefreshToken")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("RefreshTokenExpireTime")
+                    b.Property<DateTime>("RefreshTokenExpireTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("RoleId")
@@ -879,8 +868,7 @@ namespace OnlineCourse.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<Guid?>("CreatedUserId")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("created_user_id");
 
@@ -1059,7 +1047,9 @@ namespace OnlineCourse.Data.Migrations
                 {
                     b.HasOne("OnlineCourse.Data.Entites.Content", "Content")
                         .WithMany()
-                        .HasForeignKey("PhotoContentId");
+                        .HasForeignKey("PhotoContentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("OnlineCourse.Data.Entites.Role", "Role")
                         .WithMany("Users")

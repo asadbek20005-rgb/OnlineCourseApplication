@@ -19,7 +19,7 @@ public class User : BaseDateTime
     public int RoleId { get; set; }
 
     [Column("photo_content_id")]
-    public int PhotoContentId { get; set; }
+    public int? PhotoContentId { get; set; }
 
     // Main Properties
 
@@ -54,8 +54,8 @@ public class User : BaseDateTime
     [Column("gender")]
     public string Gender { get; set; } = string.Empty; // Default: NotSpecified
 
-    public string RefreshToken { get; set; }
-    public DateTime RefreshTokenExpireTime { get; set; }
+    public string? RefreshToken { get; set; }
+    public DateTime? RefreshTokenExpireTime { get; set; }
 
     // Navigation Properties
 

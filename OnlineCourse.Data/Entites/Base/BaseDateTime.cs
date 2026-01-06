@@ -13,8 +13,7 @@ public abstract class BaseDateTime
     public DateTime? UpdatedAt { get; set; }
 
     [Column("created_user_id")]
-    [Required]
-    public Guid CreatedUserId { get; set; }
+    public Guid? CreatedUserId { get; set; }
 
     [Column("updated_user_id")]
     public Guid? UpdatedUserId { get; set; }

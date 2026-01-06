@@ -13,6 +13,7 @@ public class AuthService(IUnitOfWork unitOfWork, IJwtService jwtService) : Statu
 {
     public async Task<TokenDto?> LoginAsync(LoginModel model)
     {
+
         var user = await unitOfWork.UserRepository()
             .GetAll()
             .Where(x => (x.Username == model.Username || x.Email == model.Email) && x.StatusId == Active)
@@ -24,8 +25,6 @@ public class AuthService(IUnitOfWork unitOfWork, IJwtService jwtService) : Statu
             return null;
         }
 
-
-
         var passwordHasher = new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, model.Password);
         if (passwordHasher == PasswordVerificationResult.Failed)
         {
@@ -35,7 +34,37 @@ public class AuthService(IUnitOfWork unitOfWork, IJwtService jwtService) : Statu
 
         var token = jwtService.GenerateToken(user, true);
 
+        unitOfWork.UserRepository().Update(user);
+        await unitOfWork.SaveChangesAsync();
         return token;
 
+    }
+
+    public async Task<TokenDto?> RefreshTokenAsync(TokenDto model)
+    {
+        var (check, username) = jwtService.ValidateAndGetUser(model.accessToken);
+
+        if (!check)
+        {
+            AddError("Token noto'g'ri yoki yaroqsiz");
+            return null;
+        }
+
+        var user = await unitOfWork.UserRepository()
+            .GetAll().Where(x => x.Username.Equals(username) && x.StatusId == Active)
+            .FirstOrDefaultAsync();
+
+        var isNotValid = user is null || user.RefreshToken != model.refreshToken ||
+                         user.RefreshTokenExpireTime <= DateTime.Now;
+
+        if (isNotValid)
+        {
+            AddError("Refresh token amal qilish muddati tugagan yoki noto?g?ri");
+            return null;
+        }
+
+        var tokenDto = jwtService.GenerateToken(user!, populateExp: false);
+
+        return tokenDto;
     }
 }

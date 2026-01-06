@@ -74,5 +74,8 @@ public class UnitOfWork(
 
     public IDbContextTransaction BeginTransaction() =>
         context.Database.BeginTransaction();
+
+    public async Task SaveChangesAsync() => await context.SaveChangesAsync();
+
 }
 

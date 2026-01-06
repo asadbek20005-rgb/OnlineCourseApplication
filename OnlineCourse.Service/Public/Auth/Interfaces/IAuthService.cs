@@ -7,4 +7,5 @@ namespace OnlineCourse.Service.Public;
 public interface IAuthService : IStatusGeneric
 {
     Task<TokenDto?> LoginAsync(LoginModel model);
+    Task<TokenDto?> RefreshTokenAsync(TokenDto model);
 }
