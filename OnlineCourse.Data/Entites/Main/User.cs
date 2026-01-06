@@ -54,6 +54,9 @@ public class User : BaseDateTime
     [Column("gender")]
     public string Gender { get; set; } = string.Empty; // Default: NotSpecified
 
+    public string RefreshToken { get; set; }
+    public DateTime RefreshTokenExpireTime { get; set; }
+
     // Navigation Properties
 
     [ForeignKey(nameof(StatusId))]
@@ -70,4 +73,5 @@ public class User : BaseDateTime
 
     [InverseProperty(nameof(Review.User))]
     public List<Review>? Reviews { get; set; }
+    
 }

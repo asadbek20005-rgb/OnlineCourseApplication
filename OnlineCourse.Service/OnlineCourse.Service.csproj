@@ -10,8 +10,19 @@
     <Folder Include="Admin\" />
     <Folder Include="Instructor\" />
     <Folder Include="Infrastructure\" />
-    <Folder Include="Helpers\" />
     <Folder Include="Student\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GenericServices.StatusGeneric" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="10.0.1" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.1.2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OnlineCourse.Common\OnlineCourse.Common.csproj" />
+    <ProjectReference Include="..\OnlineCourse.Data\OnlineCourse.Data.csproj" />
   </ItemGroup>
 
 </Project>
