@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OnlineCourse.Common.Dtos;
+using OnlineCourse.Common.Extensions;
 using OnlineCourse.Common.Models;
 using OnlineCourse.Data.Entites;
 using OnlineCourse.Data.Repositories;
@@ -8,14 +9,17 @@ using OnlineCourse.Service.Helpers;
 using StatusGeneric;
 
 namespace OnlineCourse.Service.Public;
+using static OnlineCourse.Common.Constants.GenderConstants;
+using static OnlineCourse.Common.Constants.MinioFolderConstant;
+using static OnlineCourse.Common.Constants.RoleConstants;
 using static OnlineCourse.Common.Constants.StatusConstants;
-public class AuthService(IUnitOfWork unitOfWork, IJwtService jwtService) : StatusGenericHandler, IAuthService
+public class AuthService(IUnitOfWork unitOfWork, IJwtService jwtService, IContentService contentService) : StatusGenericHandler, IAuthService
 {
     public async Task<TokenDto?> LoginAsync(LoginModel model)
     {
 
         var user = await unitOfWork.UserRepository()
-            .GetAll()
+            .GetAll(x => x.Role)
             .Where(x => (x.Username == model.Username || x.Email == model.Email) && x.StatusId == Active)
             .FirstOrDefaultAsync();
 
@@ -39,7 +43,6 @@ public class AuthService(IUnitOfWork unitOfWork, IJwtService jwtService) : Statu
         return token;
 
     }
-
     public async Task<TokenDto?> RefreshTokenAsync(TokenDto model)
     {
         var (check, username) = jwtService.ValidateAndGetUser(model.accessToken);
@@ -67,4 +70,46 @@ public class AuthService(IUnitOfWork unitOfWork, IJwtService jwtService) : Statu
 
         return tokenDto;
     }
+
+    public async Task<string?> RegisterAsync(CreateUserModel model)
+    {
+        if (!IsValidRole(model.RoleId)) return null;
+        if (!await IsUserExistsAsync(model.Username, model.Email)) return null;
+
+        var newUser = model.MapToEntity<User, CreateUserModel>();
+        newUser.StatusId = Active;
+        newUser.PhotoContentId = await contentService.CreateContentForImage(model.PhotoContent, UserImages);
+        newUser.PasswordHash = new PasswordHasher<User>().HashPassword(newUser, model.Password);
+        newUser.Gender = model.Gender == 1 ? Male : Female;
+        return "Foydalanuvchi muvaffaqiyatli ro‘yxatdan o‘tdi!";
+    }
+
+    private bool IsValidRole(int roleId)
+    {
+        if (roleId != InstructorRoleId && roleId != StudentRoleId)
+        {
+            AddError("Rol noto‘g‘ri. Iltimos, Instructor yoki Student rolini tanlang.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private async Task<bool> IsUserExistsAsync(string username, string email)
+    {
+        bool isExist = await unitOfWork.UserRepository()
+            .GetAll()
+            .Where(x => x.Username.Equals(username) || x.Email.Equals(email))
+            .AnyAsync();
+
+
+        if (isExist)
+        {
+            AddError("Bunday foydalanuvchi nomi yoki email allaqachon mavjud");
+            return false;
+        }
+
+        return true;
+    }
+
 }

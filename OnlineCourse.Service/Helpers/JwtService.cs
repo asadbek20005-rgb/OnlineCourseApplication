@@ -24,6 +24,7 @@ public class JwtService(IConfiguration configuration) : IJwtService
             new (ClaimTypes.Name, user.Username!),
             new (ClaimTypes.NameIdentifier, user.Id.ToString()),
             new (ClaimTypes.GivenName, $"{user.FirstName} {user.LastName}"),
+            new (ClaimTypes.Role, $"{user.Role.FullName}"),
             new Claim("role_id", user.RoleId.ToString())
         };
 

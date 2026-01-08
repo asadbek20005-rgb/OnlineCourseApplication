@@ -8,4 +8,7 @@ public class ContentType : BaseInfoEntity
 {
     [InverseProperty(nameof(Content.ContentType))]
     public List<Content>? Contents { get; set; }
+
+    [Column("type_name")]
+    public string? TypeName { get; set; }
 }

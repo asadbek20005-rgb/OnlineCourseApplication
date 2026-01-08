@@ -7,9 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Admin\" />
-    <Folder Include="Instructor\" />
-    <Folder Include="Infrastructure\" />
+    <Folder Include="Instructor\NewFolder\" />
     <Folder Include="Student\" />
   </ItemGroup>
 
@@ -17,6 +15,7 @@
     <PackageReference Include="GenericServices.StatusGeneric" Version="1.2.0" />
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="10.0.1" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.1.2" />
+    <PackageReference Include="Minio" Version="7.0.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
   </ItemGroup>
 

@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using OnlineCourse.Data.Contexts;
+using System.Linq.Expressions;
 
 namespace OnlineCourse.Data.Repositories;
 
@@ -14,16 +16,26 @@ public class BaseRepository<TEntity>(AppDbContext context) : IBaseRepository<TEn
         context.Set<TEntity>().Remove(entity);
     }
 
-    public IQueryable<TEntity> GetAll()
+    public IQueryable<TEntity> GetAll(params Expression<Func<TEntity, object>>[] includes)
     {
-        return context.Set<TEntity>().AsQueryable();
-    }
+        IQueryable<TEntity> query = context.Set<TEntity>();
 
+        // Apply each Include expression dynamically
+        foreach (var include in includes)
+        {
+            query = query.Include(include);
+        }
+
+        return query;
+    }
     public async Task<TEntity?> GetByIdAsync<TId>(TId id)
     {
         var entity = await context.Set<TEntity>().FindAsync(id);
         return entity;
     }
+
+    public async Task SaveChangesAsync() => await context.SaveChangesAsync();
+
 
     public void Update(TEntity entity)
     {

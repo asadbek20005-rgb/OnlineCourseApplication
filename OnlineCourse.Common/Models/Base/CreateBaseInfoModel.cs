@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OnlineCourse.Common.Models;
 
-public class CreateBaseInfoModel : CreateBaseDateTimeModel
+public class CreateBaseInfoModel 
 {
     [Required(ErrorMessage = "To‘liq nom kiritilishi shart.")]
     [StringLength(50, ErrorMessage = "To‘liq nom 50 ta belgidan oshmasligi kerak.")]

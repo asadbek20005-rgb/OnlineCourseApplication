@@ -18,8 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\Admin\Base\" />
-    <Folder Include="Controllers\Admin\Child\" />
     <Folder Include="Controllers\Instructor\Base\" />
     <Folder Include="Controllers\Instructor\Child\" />
     <Folder Include="Controllers\Student\Base\" />

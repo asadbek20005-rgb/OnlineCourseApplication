@@ -8,4 +8,5 @@ public interface IAuthService : IStatusGeneric
 {
     Task<TokenDto?> LoginAsync(LoginModel model);
     Task<TokenDto?> RefreshTokenAsync(TokenDto model);
+    Task<string?> RegisterAsync(CreateUserModel model);
 }

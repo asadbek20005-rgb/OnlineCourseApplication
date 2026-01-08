@@ -1,10 +1,15 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Minio;
 using OnlineCourse.Common.Settings;
 using OnlineCourse.Data.Contexts;
 using OnlineCourse.Data.Repositories;
+using OnlineCourse.Service.Admin;
+using OnlineCourse.Service.Admin.Child;
 using OnlineCourse.Service.Helpers;
+using OnlineCourse.Service.Infrastructure;
 using OnlineCourse.Service.Public;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,12 +25,36 @@ builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped(typeof(IBaseInfoService<>), typeof(BaseInfoService<>));
+builder.Services.AddScoped<IUserHelper, UserHelper>();
+builder.Services.AddScoped<IMinioService, MinioService>();
+builder.Services.AddScoped<IContentService, ContentService>();
+
+
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("Connection"));
 });
 
+#region Minio Configs
+
+builder.Services.Configure<MinioSetting>(
+    builder.Configuration.GetSection("Minio"));
+
+builder.Services.AddSingleton(sp =>
+{
+    var options = sp.GetRequiredService<IOptions<MinioSetting>>().Value;
+
+    return new MinioClient()
+        .WithEndpoint(options.Endpoint)
+        .WithCredentials(options.AccessKey, options.SecretKey)
+        .Build();
+});
+
+#endregion
 
 #region Jwt Configs
 builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JwtSettings"));

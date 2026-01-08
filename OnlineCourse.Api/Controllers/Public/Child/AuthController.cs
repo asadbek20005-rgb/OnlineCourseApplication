@@ -19,6 +19,16 @@ public class AuthController(IAuthService authService) : BasePublicController
     }
 
     [HttpPost]
+    public async Task<IActionResult> Register(CreateUserModel model)
+    {
+        var result = await authService.RegisterAsync(model);
+
+        if (authService.IsValid) return Ok(result);
+
+        return BadRequest(authService.ToErrorResponse());
+    }
+
+    [HttpPost]
     public async Task<IActionResult> RefreshToken(TokenDto model)
     {
         var result = await authService.RefreshTokenAsync(model);
