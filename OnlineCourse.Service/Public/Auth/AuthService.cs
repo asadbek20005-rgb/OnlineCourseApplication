@@ -73,15 +73,33 @@ public class AuthService(IUnitOfWork unitOfWork, IJwtService jwtService, IConten
 
     public async Task<string?> RegisterAsync(CreateUserModel model)
     {
-        if (!IsValidRole(model.RoleId)) return null;
-        if (!await IsUserExistsAsync(model.Username, model.Email)) return null;
+        await using var transaction = unitOfWork.BeginTransaction();
+        try
+        {
+            if (!IsValidRole(model.RoleId)) return null;
+            if (!await IsUserExistsAsync(model.Username, model.Email)) return null;
 
-        var newUser = model.MapToEntity<User, CreateUserModel>();
-        newUser.StatusId = Active;
-        newUser.PhotoContentId = await contentService.CreateContentForImage(model.PhotoContent, UserImages);
-        newUser.PasswordHash = new PasswordHasher<User>().HashPassword(newUser, model.Password);
-        newUser.Gender = model.Gender == 1 ? Male : Female;
-        return "Foydalanuvchi muvaffaqiyatli ro‘yxatdan o‘tdi!";
+            var newUser = model.MapToEntity<User, CreateUserModel>();
+            newUser.StatusId = Active;
+            newUser.PhotoContentId = await contentService.CreateContentForImage(model.PhotoContent, UserImages);
+            CombineStatuses(contentService);
+            if (contentService.HasErrors) return null;
+
+            newUser.PasswordHash = new PasswordHasher<User>().HashPassword(newUser, model.Password);
+            newUser.Gender = model.Gender == 1 ? Male : Female;
+            newUser.CreatedAt = DateTime.UtcNow;
+
+            await unitOfWork.UserRepository().AddAsync(newUser);
+            await unitOfWork.SaveChangesAsync();
+            await transaction.CommitAsync();
+            return "Foydalanuvchi muvaffaqiyatli ro‘yxatdan o‘tdi!";
+
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            throw new Exception(ex.Message);
+        }
     }
 
     private bool IsValidRole(int roleId)

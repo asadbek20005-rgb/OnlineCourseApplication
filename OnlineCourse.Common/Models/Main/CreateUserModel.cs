@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OnlineCourse.Common.Models;
 
-public class CreateUserModel : CreateBaseDateTimeModel
+public class CreateUserModel 
 {
     // Primary and Foreign Keys
     [Required(ErrorMessage = "Rol tanlanishi shart")]

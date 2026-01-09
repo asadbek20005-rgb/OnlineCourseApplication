@@ -1,21 +1,21 @@
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace OnlineCourse.Common.Models;
 
-public class CreateCourseModel : CreateBaseDateTimeModel
+public class CreateCourseModel
 {
     // Primary and Foreign Keys
-    [Required(ErrorMessage = "Holat (status) tanlanishi shart.")]
-    public int StatusId { get; set; }
 
     [Required(ErrorMessage = "Kategoriya tanlanishi shart.")]
     public int CategoryId { get; set; }
 
-    [Required(ErrorMessage = "Kurs rasmi tanlanishi shart.")]
-    public int PhotoContentId { get; set; }
-
     [Required(ErrorMessage = "Daraja (level) tanlanishi shart.")]
     public int LevelId { get; set; }
+
+    [Required(ErrorMessage = "Kurs rasmi tanlanishi shart.")]
+    public IFormFile PhotoContent { get; set; }
+
 
     // Main Properties
     [Required(ErrorMessage = "Kurs nomi kiritilishi shart.")]

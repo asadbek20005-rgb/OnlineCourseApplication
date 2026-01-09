@@ -30,7 +30,8 @@ public class ContentService(IMinioService minioService, IUnitOfWork unitOfWork) 
             Name = file!.Name,
             Url = uploadModel.FileName,
             ContentTypeId = contentTypeId,
-            FolderName = folderName
+            FolderName = folderName,
+            CreatedAt = DateTime.UtcNow,
         };
 
         await unitOfWork.ContentRepository().AddAsync(content);
