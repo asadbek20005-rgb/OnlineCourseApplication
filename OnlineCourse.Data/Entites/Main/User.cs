@@ -66,7 +66,7 @@ public class User : BaseDateTime
     public Role Role { get; set; } = null!;
 
     [ForeignKey(nameof(PhotoContentId))]
-    public Content Content { get; set; } = null!;
+    public Content PhotoContent { get; set; } = null!;
 
     [InverseProperty(nameof(UserCourse.User))]
     public List<UserCourse>? UserCourses { get; set; }

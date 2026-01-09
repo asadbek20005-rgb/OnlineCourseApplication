@@ -1,3 +1,4 @@
+using OnlineCourse.Common.Dtos;
 using OnlineCourse.Common.Extensions;
 using OnlineCourse.Common.Models;
 using OnlineCourse.Data.Entites;
@@ -66,5 +67,10 @@ public class InstructorCourseService(IUnitOfWork unitOfWork, IContentService con
         }
 
 
+    }
+
+    public Task<List<CourseDto>> GetAllAsync()
+    {
+        throw new NotImplementedException();
     }
 }

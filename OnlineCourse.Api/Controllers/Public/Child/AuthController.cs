@@ -19,7 +19,7 @@ public class AuthController(IAuthService authService) : BasePublicController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Register(CreateUserModel model)
+    public async Task<IActionResult> Register([FromForm]CreateUserModel model)
     {
         var result = await authService.RegisterAsync(model);
 

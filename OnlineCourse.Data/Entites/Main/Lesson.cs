@@ -16,6 +16,8 @@ public class Lesson : BaseDateTime
     [Column("status_id")]
     public int StatusId { get; set; }
 
+    [Column("video_content_id")]
+    public int VideoContentId { get; set; }
 
     // Main 
 
@@ -35,7 +37,7 @@ public class Lesson : BaseDateTime
     [ForeignKey(nameof(StatusId))]
     public Status Status { get; set; } = null!;
 
-    [InverseProperty(nameof(Content.Lesson))]
-    public List<Content>? Contents { get; set; } 
+    [ForeignKey(nameof(VideoContentId))]
+    public Content VideoContent { get; set; } = null!;
 
 }

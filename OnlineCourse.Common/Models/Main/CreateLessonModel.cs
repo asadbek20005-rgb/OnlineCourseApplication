@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace OnlineCourse.Common.Models;
@@ -8,9 +9,8 @@ public class CreateLessonModel : CreateBaseDateTimeModel
     [Required(ErrorMessage = "Kurs tanlanishi shart.")]
     public int CourseId { get; set; }
 
-    [Required(ErrorMessage = "Holat (status) tanlanishi shart.")]
-    public int StatusId { get; set; }
-
+    [Required]
+    public IFormFile VideoContent { get; set; }
     // Main
     [Required(ErrorMessage = "Dars nomi kiritilishi shart.")]
     [StringLength(100, ErrorMessage = "Dars nomi 100 ta belgidan oshmasligi kerak.")]

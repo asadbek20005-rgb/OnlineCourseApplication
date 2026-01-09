@@ -13,9 +13,6 @@ public class Content : BaseDateTime
     [Column("content_type_id")]
     public int ContentTypeId { get; set; }
 
-    [Column("lesson_id")]
-    public int LessonId { get; set; }
-
     // Main
 
     [Column("name")]
@@ -35,6 +32,9 @@ public class Content : BaseDateTime
     [ForeignKey(nameof(ContentTypeId))]
     public ContentType ContentType { get; set; } = null!;
 
-    [ForeignKey(nameof(LessonId))]
-    public Lesson Lesson { get; set; } = null!;
+    [InverseProperty(nameof(User.PhotoContent))]
+    public List<User>? Users { get; set; }
+
+    [InverseProperty(nameof(Lesson.VideoContent))]
+    public List<Lesson>? Lessons { get; set; }
 }
