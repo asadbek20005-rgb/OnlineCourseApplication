@@ -2,21 +2,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OnlineCourse.Common.Models;
 
-public class UpdateCourseModel : UpdateBaseDateTimeModel
+public class UpdateCourseModel
 {
     // Primary and Foreign Keys
-
-    public int StatusId { get; set; }
-    public int CategoryId { get; set; }
-    public int PhotoContentId { get; set; }
-    public int LevelId { get; set; }
+    public int? CategoryId { get; set; }
+    public int? LevelId { get; set; }
 
     // Main Properites
 
     [StringLength(100)]
-    [Required]
-    public string Title { get; set; } = string.Empty;
+    public string? Title { get; set; }
 
-    [Required]
-    public string Curriculum { get; set; } = string.Empty;
+
+    public string? Curriculum { get; set; }
 }
