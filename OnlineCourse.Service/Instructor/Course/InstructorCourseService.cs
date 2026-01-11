@@ -19,7 +19,7 @@ using static OnlineCourse.Common.Constants.StatusConstants;
 
 public class InstructorCourseService(IUnitOfWork unitOfWork,
     IContentService contentService,
-    IUserHelper userHelper) 
+    IUserHelper userHelper)
     : StatusGenericHandler, IInstructorCourseService
 {
     private Guid UserId => Guid.Parse(userHelper.GetUserId());
@@ -80,7 +80,7 @@ public class InstructorCourseService(IUnitOfWork unitOfWork,
         var courses = unitOfWork
             .CourseRepository()
             .GetAll(x => x.Status, x => x.Level, x => x.Category, x => x.Content)
-            .Where(x => x.StatusId == Active && courseIds.Contains(x.Id));
+            .Where(x => x.StatusId != Deleted && courseIds.Contains(x.Id));
         var config = GetCustomConfig();
 
         var (resultQuery, totalCount) = courses.ApplyFilter(options);
@@ -151,8 +151,36 @@ public class InstructorCourseService(IUnitOfWork unitOfWork,
 
     public async Task<string?> UpdateCoursePhotoAsync(int courseId, IFormFile file)
     {
-        var course = await GetByIdAsync(courseId);
-        if (course is null) return null;
+        await using var transaction = unitOfWork.BeginTransaction();
+        try
+        {
+            var course = await GetByIdAsync(courseId);
+            if (course is null) return null;
+
+            course.PhotoContentId = await contentService.UpdateContentForImage(course.PhotoContentId, file) ?? 0;
+            CombineStatuses(contentService);
+            if (contentService.HasErrors) return null;
+
+            course.StatusId = Updated;
+
+            course.UpdatedAt = DateTime.UtcNow;
+            course.UpdatedUserId = UserId;
+
+            unitOfWork.CourseRepository().Update(course);
+            await unitOfWork.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+            return "Kursning rasmi muvaffaqiyatli yuklandi!";
+
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            AddError(ex.Message);
+            throw;
+        }
+
+
 
 
     }
@@ -186,7 +214,7 @@ public class InstructorCourseService(IUnitOfWork unitOfWork,
         var course = await unitOfWork
             .CourseRepository()
             .GetAll(x => x.Status, x => x.Level, x => x.Category, x => x.Content)
-            .Where(x => x.StatusId == Active && x.Id == userCourseId)
+            .Where(x => x.StatusId != Deleted && x.Id == userCourseId)
             .FirstOrDefaultAsync();
 
         if (course is null)
@@ -217,5 +245,5 @@ public class InstructorCourseService(IUnitOfWork unitOfWork,
         return true;
     }
 
-   
+
 }

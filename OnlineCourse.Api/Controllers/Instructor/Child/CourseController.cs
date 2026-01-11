@@ -42,4 +42,20 @@ public class CourseController(IInstructorCourseService service) : BaseInstructor
         return BadRequest(service.ToErrorResponse());
     }
 
+    [HttpPut("{courseId}")]
+    public async Task<IActionResult> UpdatePhoto(int courseId, IFormFile file)
+    {
+        var result = await service.UpdateCoursePhotoAsync(courseId, file);
+        if (service.IsValid) return Ok(result);
+        return BadRequest(service.ToErrorResponse());
+    }
+
+    [HttpDelete("{courseId}")]
+    public async Task<IActionResult> Delete(int courseId)
+    {
+        var result = await service.DeleteCourseAsync(courseId);
+        if (service.IsValid) return Ok(result);
+        return BadRequest(service.ToErrorResponse());
+    }
+
 }
