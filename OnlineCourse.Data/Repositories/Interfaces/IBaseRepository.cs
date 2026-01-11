@@ -11,4 +11,6 @@ public interface IBaseRepository<TEntity> where TEntity : class
     void Delete(TEntity entity);
     Task SaveChangesAsync();
 
+    Task AddRangeAsync(IQueryable<TEntity> entities);
+
 }

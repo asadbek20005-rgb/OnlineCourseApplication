@@ -32,7 +32,7 @@ builder.Services.AddScoped<IUserHelper, UserHelper>();
 builder.Services.AddScoped<IMinioService, MinioService>();
 builder.Services.AddScoped<IContentService, ContentService>();
 builder.Services.AddScoped<IInstructorCourseService, InstructorCourseService>();
-
+builder.Services.AddScoped<ILessonService, LessonService>();
 
 builder.Services.AddHttpContextAccessor();
 

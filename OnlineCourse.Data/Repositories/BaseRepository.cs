@@ -1,14 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using OnlineCourse.Data.Contexts;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace OnlineCourse.Data.Repositories;
 
-public class BaseRepository<TEntity>(AppDbContext context) : IBaseRepository<TEntity> where TEntity : class 
+public class BaseRepository<TEntity>(AppDbContext context) : IBaseRepository<TEntity> where TEntity : class
 {
     public async Task AddAsync(TEntity entity)
     {
         await context.Set<TEntity>().AddAsync(entity);
+    }
+
+    public async Task AddRangeAsync(IQueryable<TEntity> entities)
+    {
+       await context.Set<TEntity>().AddRangeAsync(entities);
     }
 
     public void Delete(TEntity entity)

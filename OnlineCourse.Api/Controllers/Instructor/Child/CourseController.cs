@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineCourse.Common.Extensions;
 using OnlineCourse.Common.FilterOptions;
 using OnlineCourse.Common.Models;
+using OnlineCourse.Service.Instructor;
 using OnlineCourse.Service.Instructor.Course.Interfaces;
 
 namespace OnlineCourse.Api.Controllers.Instructor;
@@ -57,5 +58,4 @@ public class CourseController(IInstructorCourseService service) : BaseInstructor
         if (service.IsValid) return Ok(result);
         return BadRequest(service.ToErrorResponse());
     }
-
 }
