@@ -8,7 +8,7 @@ public class CreateLessonModel
     // Keys
 
     [Required]
-    public IFormFile VideoContent { get; set; }
+    public IFormFile File { get; set; }
     // Main
     [Required(ErrorMessage = "Dars nomi kiritilishi shart.")]
     [StringLength(100, ErrorMessage = "Dars nomi 100 ta belgidan oshmasligi kerak.")]

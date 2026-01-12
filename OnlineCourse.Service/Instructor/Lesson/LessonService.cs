@@ -1,3 +1,4 @@
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using OnlineCourse.Common.Dtos;
 using OnlineCourse.Common.Extensions;
@@ -22,7 +23,7 @@ public class LessonService(IUnitOfWork unitOfWork, IContentService contentServic
             var id = await GetCourseIdAsync(courseId);
             if (id is null) return null;
 
-            if(models.Count == 0 || models is null)
+            if (models.Count == 0 || models is null)
             {
                 AddError("Ma?lumotlar topilmadi.");
                 return null;
@@ -31,7 +32,7 @@ public class LessonService(IUnitOfWork unitOfWork, IContentService contentServic
             var lessonEntities = new List<Lesson>();
             foreach (var model in models)
             {
-                if ((model.VideoContent is null || model.VideoContent.Length == 0) && string.IsNullOrEmpty(model.Title))
+                if ((model.File is null || model.File.Length == 0) && string.IsNullOrEmpty(model.Title))
                 {
                     AddError("");
                     return null;
@@ -39,11 +40,12 @@ public class LessonService(IUnitOfWork unitOfWork, IContentService contentServic
 
                 var newLesson = model.MapToEntity<Lesson, CreateLessonModel>();
                 newLesson.StatusId = Active;
-                newLesson.VideoContentId = await contentService.CreateContentForVideo(model.VideoContent, LessonVideos) ?? 0;
+                newLesson.VideoContentId = await contentService.CreateContentForVideo(model.File, LessonVideos) ?? 0;
                 CombineStatuses(contentService);
                 if (contentService.HasErrors) return null;
                 newLesson.CreatedAt = DateTime.UtcNow;
                 newLesson.CreatedUserId = UserId;
+                newLesson.CourseId = courseId;
                 lessonEntities.Add(newLesson);
             }
             await unitOfWork.LessonRepository().AddRangeAsync(lessonEntities.AsQueryable());
@@ -59,29 +61,93 @@ public class LessonService(IUnitOfWork unitOfWork, IContentService contentServic
         }
     }
 
-    public Task<string?> DeleteLesson(int courseId, int lessonId)
+    public async Task<string?> DeleteLessonAsync(int courseId, int lessonId)
     {
-        throw new NotImplementedException();
+        var course_id = await GetCourseIdAsync(courseId);
+        if (course_id is null) return null;
+
+        var lesson = await GetLessonByIdAsync(courseId, lessonId);
+        if (lesson is null) return null;
+
+        lesson.StatusId = Deleted;
+        lesson.UpdatedAt = DateTime.UtcNow;
+        lesson.UpdatedUserId = UserId;
+
+        unitOfWork.LessonRepository().Update(lesson);
+        await unitOfWork.SaveChangesAsync();
+
+        return "Darslik muvaffaqiyatli o'chirildi!";
     }
 
-    public Task<PaginationModel<LessonDto>> GetAllAsync(LessonFilterOptions options)
+    public async Task<PaginationModel<LessonDto>?> GetAllAsync(int courseId, LessonFilterOptions options)
     {
-        throw new NotImplementedException();
+        var id = await GetCourseIdAsync(courseId);
+        if (id is 0) return null;
+
+        var lessons = unitOfWork.LessonRepository()
+            .GetAll(x => x.Status)
+            .Where(x => x.CourseId == id && x.StatusId != Deleted);
+
+        var (resultQuery, totalCount) = lessons.ApplyFilter(options);
+
+        var config = GetCustomConfig();
+        var dtos = resultQuery.MapToDtos<Lesson, LessonDto>(config)
+            .ToPaginationModel(options.Page, options.PageSize, totalCount);
+
+        return dtos;
     }
 
-    public Task<PaginationModel<LessonDto>> GetAllAsync(int courseId, LessonFilterOptions options)
+    public async Task<LessonDto?> GetByIdAsync(int courseId, int lessonId)
     {
-        throw new NotImplementedException();
+        var id = await GetCourseIdAsync(courseId);
+        if (id is 0) return null;
+
+        var lesson = await GetLessonByIdAsync(courseId, lessonId);
+        if (lesson is null) return null;
+
+        var config = GetCustomConfig();
+
+        return lesson.MapToDto<Lesson, LessonDto>(config);
+
     }
 
-    public Task<LessonDto?> GetByIdAsync(int courseId, int lessonId)
+    public async Task<string?> UpdateLessonAsync(int courseId, int lessonId, UpdateLessonModel model)
     {
-        throw new NotImplementedException();
-    }
+        await using var transaction = unitOfWork.BeginTransaction();
+        try
+        {
+            var course_id = await GetCourseIdAsync(courseId);
+            if (course_id is null) return null;
 
-    public Task<string?> UpdateLesson(int courseId, UpdateLessonModel model)
-    {
-        throw new NotImplementedException();
+            var lesson = await GetLessonByIdAsync(courseId,lessonId);
+            if (lesson is null) return null;
+
+            lesson = model.MapForUpdate(lesson);
+
+            if (model.File is not null && model.File.Length != 0)
+            {
+                lesson.VideoContentId = await contentService.CreateContentForVideo(model.File, LessonVideos) ?? 0;
+                CombineStatuses(contentService);
+                if (contentService.HasErrors) return null;
+            }
+            lesson.StatusId = Updated;
+            lesson.UpdatedAt = DateTime.UtcNow;
+            lesson.UpdatedUserId = UserId;
+
+            unitOfWork.LessonRepository().Update(lesson);
+            await unitOfWork.SaveChangesAsync();
+            await transaction.CommitAsync();
+            return "Darslik muvaffaqiyatli yangilandi!";
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            AddError(ex.Message);
+            throw;
+        }
+
+
+
     }
 
 
@@ -107,5 +173,32 @@ public class LessonService(IUnitOfWork unitOfWork, IContentService contentServic
         }
 
         return id;
+    }
+
+    private TypeAdapterConfig GetCustomConfig()
+    {
+        var config = new TypeAdapterConfig();
+
+        config.NewConfig<Lesson, LessonDto>()
+            .Map(dest => dest.StatusName, src => src.Status.ShortName);
+
+        return config;
+    }
+
+    private async Task<Lesson?> GetLessonByIdAsync(int courseId,int id)
+    {
+        var lesson = await unitOfWork.LessonRepository()
+            .GetAll(x => x.Status)
+            .Where(x => x.CourseId == courseId && x.Id == id && x.StatusId != Deleted)
+            .FirstOrDefaultAsync();
+
+        if (lesson is null)
+        {
+            AddError("Darslik topilmadi!");
+            return null;
+        }
+
+
+        return lesson;
     }
 }
