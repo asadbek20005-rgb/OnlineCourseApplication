@@ -4,6 +4,8 @@ public static class RoleConstants
 {
     public const string AdminRole = "Administrator";
     public const string InstructorRole = "Instructor";
+    public const string StudentRole = "Student";
+
 
     // IDs
     public const int AdminRoleId = 2;

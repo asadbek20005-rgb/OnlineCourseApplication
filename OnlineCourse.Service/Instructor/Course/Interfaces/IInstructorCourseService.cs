@@ -14,4 +14,6 @@ public interface IInstructorCourseService : IStatusGeneric
     Task<string?> UpdateCourseAsync(int courseId,UpdateCourseModel model);
     Task<string?> DeleteCourseAsync(int courseId);
     Task<string?> UpdateCoursePhotoAsync(int courseId, IFormFile file);
+    Task<string?> MakeActiveAsync(int courseId);
+    Task<string?> MakeDeActiveAsync(int courseId);
 }

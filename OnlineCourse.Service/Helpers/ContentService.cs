@@ -38,7 +38,6 @@ public class ContentService(IMinioService minioService, IUnitOfWork unitOfWork) 
         await unitOfWork.SaveChangesAsync();
         return content.Id;
     }
-
     public async Task<int?> CreateContentForVideo(IFormFile? file, string folderName)
     {
         bool isValidFile = ValdateFileForVideo(file);
@@ -53,14 +52,14 @@ public class ContentService(IMinioService minioService, IUnitOfWork unitOfWork) 
             Name = file!.Name,
             Url = uploadModel.FileName,
             ContentTypeId = contentTypeId,
-            FolderName = folderName
+            FolderName = folderName,
+            CreatedAt = DateTime.UtcNow
         };
 
         await unitOfWork.ContentRepository().AddAsync(content);
         await unitOfWork.SaveChangesAsync();
         return content.Id;
     }
-
     public async Task<int?> UpdateContentForImage(int id, IFormFile file)
     {
         try
@@ -96,7 +95,6 @@ public class ContentService(IMinioService minioService, IUnitOfWork unitOfWork) 
             return null;
         }
     }
-
     public async Task<int?> UpdateContentForVideo(int id, IFormFile file)
     {
         try
@@ -136,6 +134,24 @@ public class ContentService(IMinioService minioService, IUnitOfWork unitOfWork) 
             return null;
         }
     }
+
+    public async Task<(Stream, string)> GetContentForVideo(int id, string folderName, string url)
+    {
+        var content = await unitOfWork.ContentRepository().GetAll()
+            .Where(x => x.Url == url && x.Id == id && x.FolderName == folderName)
+            .FirstOrDefaultAsync();
+
+        if (content is null)
+        {
+            AddError("Content Topilmadi!");
+            return (Stream.Null, string.Empty);
+        }
+
+        return await minioService.DownloadFileAsync(folderName: content.FolderName, fileName: content.Url);
+
+
+    }
+
 
 
     private bool ValidateFile(IFormFile? file)
@@ -201,7 +217,6 @@ public class ContentService(IMinioService minioService, IUnitOfWork unitOfWork) 
 
         return new UploadFileModel(fileName, contentType, size, data);
     }
-
     private bool ValdateFileForVideo(IFormFile? file)
     {
         if (file == null || file.Length == 0)
@@ -232,4 +247,6 @@ public class ContentService(IMinioService minioService, IUnitOfWork unitOfWork) 
     .FirstAsync();
         return contentTypeId;
     }
+
+
 }

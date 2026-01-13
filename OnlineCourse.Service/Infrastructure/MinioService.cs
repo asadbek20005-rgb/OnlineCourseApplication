@@ -62,7 +62,6 @@ public class MinioService : StatusGenericHandler, IMinioService
             AddError($"[MinIO Upload Error]: {e.Message}");
         }
     }
-
     public async Task<UploadFileModel?> GetFileAsync(string folderName, string fileName)
     {
         try
@@ -95,7 +94,6 @@ public class MinioService : StatusGenericHandler, IMinioService
             throw new MinioException($"[Minio Error]: {e.Message}");
         }
     }
-
     public async Task RemoveFileAsync(string folderName, string fileName)
     {
         try
@@ -124,6 +122,49 @@ public class MinioService : StatusGenericHandler, IMinioService
         catch (Exception e)
         {
             throw new MinioException($"[MinIO Remove Error for {fileName}]: {e.Message}");
+        }
+    }
+    public async Task<(Stream, string)> DownloadFileAsync(string folderName, string fileName)
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+            throw new ArgumentException("File name is empty");
+
+        var objectName = string.IsNullOrWhiteSpace(folderName)
+            ? fileName
+            : $"{folderName}/{fileName}";
+
+        try
+        {
+            var memoryStream = new MemoryStream();
+
+            // 1?? Object info (content-type olish uchun)
+            var stat = await _minioClient.StatObjectAsync(
+                new StatObjectArgs()
+                    .WithBucket(_bucketName)
+                    .WithObject(objectName));
+
+            // 2?? Object yuklab olish
+            await _minioClient.GetObjectAsync(
+                new GetObjectArgs()
+                    .WithBucket(_bucketName)
+                    .WithObject(objectName)
+                    .WithCallbackStream(stream =>
+                    {
+                        stream.CopyTo(memoryStream);
+                    }));
+
+            memoryStream.Position = 0;
+
+            var contentType = string.IsNullOrWhiteSpace(stat.ContentType)
+                ? "application/octet-stream"
+                : stat.ContentType;
+
+            return (memoryStream, contentType);
+        }
+        catch
+        {
+            // ?? Asl MinIO xatosini saqlab qoladi
+            throw;
         }
     }
 }

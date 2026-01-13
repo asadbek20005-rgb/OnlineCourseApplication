@@ -150,7 +150,6 @@ public class LessonService(IUnitOfWork unitOfWork, IContentService contentServic
 
     }
 
-
     private async Task<int?> GetCourseIdAsync(int courseId)
     {
         var userCourseId = await unitOfWork.UserCourseRepository()

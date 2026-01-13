@@ -18,11 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\Student\Base\" />
-    <Folder Include="Controllers\Student\Child\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\OnlineCourse.Common\OnlineCourse.Common.csproj" />
     <ProjectReference Include="..\OnlineCourse.Data\OnlineCourse.Data.csproj" />
     <ProjectReference Include="..\OnlineCourse.Service\OnlineCourse.Service.csproj" />

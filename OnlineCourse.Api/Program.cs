@@ -13,6 +13,9 @@ using OnlineCourse.Service.Infrastructure;
 using OnlineCourse.Service.Instructor;
 using OnlineCourse.Service.Instructor.Course.Interfaces;
 using OnlineCourse.Service.Public;
+using OnlineCourse.Service.Student;
+using OnlineCourse.Service.Student.Course.Interfaces;
+using OnlineCourse.Service.Student.Lesson;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +36,8 @@ builder.Services.AddScoped<IMinioService, MinioService>();
 builder.Services.AddScoped<IContentService, ContentService>();
 builder.Services.AddScoped<IInstructorCourseService, InstructorCourseService>();
 builder.Services.AddScoped<ILessonService, LessonService>();
-
+builder.Services.AddScoped<IStudentCourseService, StudentCourseService>();
+builder.Services.AddScoped<IStudentLessonService, StudentLessonService>();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddDbContext<AppDbContext>(options =>

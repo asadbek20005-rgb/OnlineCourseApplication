@@ -245,5 +245,13 @@ public class InstructorCourseService(IUnitOfWork unitOfWork,
         return true;
     }
 
+    public Task<string?> MakeActiveAsync(int courseId)
+    {
+        throw new NotImplementedException();
+    }
 
+    public Task<string?> MakeDeActiveAsync(int courseId)
+    {
+        throw new NotImplementedException();
+    }
 }
