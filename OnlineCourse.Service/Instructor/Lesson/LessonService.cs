@@ -167,7 +167,7 @@ public class LessonService(IUnitOfWork unitOfWork, IContentService contentServic
 
         if (id is 0)
         {
-            AddError("");
+            AddError("Kurs Topilmadi!");
             return null;
         }
 

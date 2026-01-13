@@ -17,21 +17,23 @@ public class StudentLessonService(IUnitOfWork unitOfWork, IContentService conten
 {
     private Guid UserId => Guid.Parse(userHelper.GetUserId());
 
-    public async Task<PaginationModel<LessonDto>> GetAllAsync(int courseId, LessonFilterOptions options)
+    public async Task<PaginationModel<LessonDto>?> GetAllAsync(int courseId, LessonFilterOptions options)
     {
-        int course_id = await GetCourseIdAsync(courseId);
-
-        if (courseId is 0) return (PaginationModel<LessonDto>)Enumerable.Empty<PaginationModel<LessonDto>>();
+        var id = await GetCourseIdAsync(courseId);
+        if (id is 0) return null;
 
         var lessons = unitOfWork.LessonRepository()
-           .GetAll(x => x.Status)
-           .Where(x => x.CourseId == course_id && x.StatusId != Deleted);
+            .GetAll(x => x.Status)
+            .Where(x => x.CourseId == id && x.StatusId != Deleted);
 
         var (resultQuery, totalCount) = lessons.ApplyFilter(options);
 
         var config = GetCustomConfig();
         var dtos = resultQuery.MapToDtos<Data.Entites.Lesson, LessonDto>(config)
             .ToPaginationModel(options.Page, options.PageSize, totalCount);
+
+
+        var co = await lessons.ToListAsync();
 
         return dtos;
 
@@ -106,7 +108,7 @@ public class StudentLessonService(IUnitOfWork unitOfWork, IContentService conten
     private async Task<Data.Entites.Lesson?> GetLessonByIdAsync(int courseId, int id)
     {
         var lesson = await unitOfWork.LessonRepository()
-            .GetAll(x => x.Status, x=> x.VideoContent)
+            .GetAll(x => x.Status, x => x.VideoContent)
             .Where(x => x.CourseId == courseId && x.Id == id && x.StatusId != Deleted)
             .FirstOrDefaultAsync();
 
