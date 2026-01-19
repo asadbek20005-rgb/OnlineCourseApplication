@@ -7,6 +7,7 @@ using OnlineCourse.Data.Entites;
 using OnlineCourse.Data.Repositories;
 using OnlineCourse.Service.Helpers;
 using StatusGeneric;
+using System.Text.RegularExpressions;
 
 namespace OnlineCourse.Service.Public;
 using static OnlineCourse.Common.Constants.GenderConstants;
@@ -17,10 +18,11 @@ public class AuthService(IUnitOfWork unitOfWork, IJwtService jwtService, IConten
 {
     public async Task<TokenDto?> LoginAsync(LoginModel model)
     {
-
+        bool isValid = ValidateEmailOrUsername(model.Identifier);
+        if (!isValid) return null;
         var user = await unitOfWork.UserRepository()
             .GetAll(x => x.Role)
-            .Where(x => (x.Username == model.Username || x.Email == model.Email) && x.StatusId == Active)
+            .Where(x => (x.Username == model.Identifier || x.Email == model.Identifier) && x.StatusId == Active)
             .FirstOrDefaultAsync();
 
         if (user is null)
@@ -128,6 +130,54 @@ public class AuthService(IUnitOfWork unitOfWork, IJwtService jwtService, IConten
         }
 
         return true;
+    }
+    private bool ValidateEmailOrUsername(string emailOrUsername)
+    {
+        if (string.IsNullOrWhiteSpace(emailOrUsername))
+        {
+            AddError("Username yoki Email kiritilishi shart");
+            return false;
+        }
+
+        // Email bo‘lsa
+        if (emailOrUsername.Contains('@'))
+        {
+            var result = IsValidEmail(emailOrUsername);
+            if (!result)
+            {
+                AddError("Email formati noto‘g‘ri");
+                return false;
+            }
+        }
+        // Username bo‘lsa
+        else
+        {
+            var result = IsValidUsername(emailOrUsername);
+            if (!result)
+            {
+                AddError("Username noto‘g‘ri formatda (3–30 belgi, faqat harf va raqam)");
+                return false;
+            }
+        }
+
+        return true;
+    }
+    private static bool IsValidEmail(string email)
+    {
+        try
+        {
+            var addr = new System.Net.Mail.MailAddress(email);
+            return addr.Address == email;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+    private static bool IsValidUsername(string username)
+    {
+        // 3–30 ta belgi, faqat harf, raqam va underscore
+        return Regex.IsMatch(username, @"^[a-zA-Z0-9_]{3,30}$");
     }
 
 }
