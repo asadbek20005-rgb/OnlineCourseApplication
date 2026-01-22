@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineCourse.Common.Extensions;
 using OnlineCourse.Common.FilterOptions;
 using OnlineCourse.Common.Models;
-using OnlineCourse.Service.Instructor;
 using OnlineCourse.Service.Instructor.Course.Interfaces;
 
 namespace OnlineCourse.Api.Controllers.Instructor;
@@ -28,7 +27,7 @@ public class CourseController(IInstructorCourseService service) : BaseInstructor
 
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateCourseModel model)
+    public async Task<IActionResult> Create([FromForm] CreateCourseModel model)
     {
         var result = await service.CreateCourseAsync(model);
         if (service.IsValid) return Ok(result);
@@ -48,6 +47,15 @@ public class CourseController(IInstructorCourseService service) : BaseInstructor
     {
         var result = await service.UpdateCoursePhotoAsync(courseId, file);
         if (service.IsValid) return Ok(result);
+        return BadRequest(service.ToErrorResponse());
+    }
+
+    [HttpPut("{courseId}")]
+    public async Task<IActionResult> MakePublic(int courseId)
+    {
+        var result = await service.MakePublicAsync(courseId);
+        if (service.IsValid) return Ok(result);
+
         return BadRequest(service.ToErrorResponse());
     }
 

@@ -13,4 +13,7 @@ public interface ILessonService : IStatusGeneric
     Task<string?> UpdateLessonAsync(int courseId, int lessonId,UpdateLessonModel model);
     Task<string?> DeleteLessonAsync(int courseId, int lessonId);
 
+    Task<(Stream, string)> WatchVideoAsync(int courseId, int lessonId);
+
+
 }

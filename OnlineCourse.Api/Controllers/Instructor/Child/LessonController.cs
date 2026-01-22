@@ -11,10 +11,10 @@ public class LessonController(ILessonService service) : BaseInstructorController
 {
 
     [HttpPost("{courseId}")]
-    public async Task<IActionResult> GetAll(int courseId,LessonFilterOptions options)
+    public async Task<IActionResult> GetAll(int courseId, LessonFilterOptions options)
     {
-        var result = await service.GetAllAsync(courseId,options);
-        if(service.IsValid) return Ok(result);
+        var result = await service.GetAllAsync(courseId, options);
+        if (service.IsValid) return Ok(result);
         return Ok(service.ToErrorResponse());
     }
 
@@ -28,7 +28,7 @@ public class LessonController(ILessonService service) : BaseInstructorController
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateLessons([FromForm]CreateLessonsModel model)
+    public async Task<IActionResult> CreateLessons([FromForm] CreateLessonsModel model)
     {
         var result = await service.CreateLessonsAsync(model.CourseId, model.Models);
         if (service.IsValid) return Ok(result);
@@ -49,6 +49,16 @@ public class LessonController(ILessonService service) : BaseInstructorController
     {
         var result = await service.DeleteLessonAsync(courseId, lessonId);
         if (service.IsValid) return Ok(result);
+        return BadRequest(service.ToErrorResponse());
+    }
+
+    [HttpGet("{courseId}/{lessonId}")]
+    public async Task<IActionResult> WatchVideo(int courseId, int lessonId)
+    {
+        var (result, contentType) = await service.WatchVideoAsync(courseId, lessonId);
+
+        if (service.IsValid) return File(result, contentType);
+
         return BadRequest(service.ToErrorResponse());
     }
 }

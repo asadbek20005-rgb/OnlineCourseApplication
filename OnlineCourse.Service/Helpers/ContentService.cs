@@ -248,5 +248,19 @@ public class ContentService(IMinioService minioService, IUnitOfWork unitOfWork) 
         return contentTypeId;
     }
 
+    public async Task<(Stream, string)> DownloadFileAsync(string url)
+    {
+        var content = await unitOfWork.ContentRepository().GetAll()
+       .Where(x => x.Url == url)
+       .FirstOrDefaultAsync();
 
+        if (content is null)
+        {
+            AddError("Content Topilmadi!");
+            return (Stream.Null, string.Empty);
+        }
+
+         return await minioService.DownloadFileAsync(folderName: content.FolderName, fileName: content.Url);
+
+    }
 }

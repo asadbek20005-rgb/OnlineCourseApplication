@@ -150,6 +150,22 @@ public class LessonService(IUnitOfWork unitOfWork, IContentService contentServic
 
     }
 
+    public async Task<(Stream, string)> WatchVideoAsync(int courseId, int lessonId)
+    {
+        var id = await GetCourseIdAsync(courseId);
+        if (id is 0) return (Stream.Null, string.Empty);
+
+        var lesson = await GetLessonByIdAsync(courseId, lessonId);
+        if (lesson is null) return (Stream.Null, string.Empty);
+
+        var (stream, contentType) = await contentService.GetContentForVideo(lesson.VideoContentId, LessonVideos, lesson.VideoContent.Url);
+
+        CombineStatuses(contentService);
+        if (contentService.HasErrors) return (Stream.Null, string.Empty);
+
+        return (stream, contentType);
+    }
+
     private async Task<int?> GetCourseIdAsync(int courseId)
     {
         var userCourseId = await unitOfWork.UserCourseRepository()
@@ -187,7 +203,7 @@ public class LessonService(IUnitOfWork unitOfWork, IContentService contentServic
     private async Task<Lesson?> GetLessonByIdAsync(int courseId,int id)
     {
         var lesson = await unitOfWork.LessonRepository()
-            .GetAll(x => x.Status)
+            .GetAll(x => x.Status, x => x.VideoContent)
             .Where(x => x.CourseId == courseId && x.Id == id && x.StatusId != Deleted)
             .FirstOrDefaultAsync();
 

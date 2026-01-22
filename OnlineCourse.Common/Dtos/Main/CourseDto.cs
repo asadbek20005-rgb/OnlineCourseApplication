@@ -2,7 +2,7 @@ namespace OnlineCourse.Common.Dtos;
 
 public class CourseDto : BaseDateTimeDto
 {
-
+    public int Id { get; set; }
     public string Title { get; set; } = null!;
     public string Curriculum { get; set; } = null!;
     public string StatusName { get; set; } = null!;

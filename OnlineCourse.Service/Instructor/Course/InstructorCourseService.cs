@@ -185,6 +185,89 @@ public class InstructorCourseService(IUnitOfWork unitOfWork,
 
     }
 
+    public async Task<string?> MakeActiveAsync(int courseId)
+    {
+        var userCourse = await unitOfWork.UserCourseRepository().GetAll().Where(x => x.UserId == UserId && x.CourseId == courseId && x.IsActive)
+            .FirstOrDefaultAsync();
+
+        if (userCourse is null)
+        {
+            AddError("Course topilmadi");
+            return null;
+        }
+
+        userCourse.IsActive = true;
+
+        unitOfWork.UserCourseRepository().Update(userCourse);
+        await unitOfWork.SaveChangesAsync();
+        return "Kurs aktivlashtirildi!";
+
+    }
+
+    public async Task<string?> MakeDeActiveAsync(int courseId)
+    {
+        var userCourse = await unitOfWork.UserCourseRepository().GetAll().Where(x => x.UserId == UserId && x.CourseId == courseId && x.IsActive)
+           .FirstOrDefaultAsync();
+
+        if (userCourse is null)
+        {
+            AddError("Course topilmadi");
+            return null;
+        }
+
+        userCourse.IsActive = false;
+
+        unitOfWork.UserCourseRepository().Update(userCourse);
+        await unitOfWork.SaveChangesAsync();
+        return "Kurs deaktivlashtirildi!";
+    }
+
+
+    public async Task<string?> MakePublicAsync(int courseId)
+    {
+        var userCourseId = await unitOfWork.UserCourseRepository().GetAll().Where(x => x.UserId == UserId && x.CourseId == courseId && x.IsActive)
+            .Select(x => x.CourseId)
+            .FirstOrDefaultAsync();
+
+        var course = await unitOfWork.CourseRepository().GetAll().Where(x => x.Id == userCourseId).FirstOrDefaultAsync();
+
+        if(course is null)
+        {
+            AddError("Kurs topilmadi");
+            return null;
+        }
+
+
+        course.StatusId = Public;
+
+        unitOfWork.CourseRepository().Update(course);
+        await unitOfWork.SaveChangesAsync();
+
+        return "Kurs muvaffaqiyatli ommaga e’lon qilindi";
+    }
+
+    public async Task<string?> MakeUnPublicAsync(int courseId)
+    {
+        var userCourseId = await unitOfWork.UserCourseRepository().GetAll().Where(x => x.UserId == UserId && x.CourseId == courseId && x.IsActive)
+            .Select(x => x.CourseId)
+            .FirstOrDefaultAsync();
+
+        var course = await unitOfWork.CourseRepository().GetAll().Where(x => x.Id == userCourseId).FirstOrDefaultAsync();
+
+        if (course is null)
+        {
+            AddError("Kurs topilmadi");
+            return null;
+        }
+
+
+        course.StatusId = Public;
+
+        unitOfWork.CourseRepository().Update(course);
+        await unitOfWork.SaveChangesAsync();
+
+        return "Kurs muvaffaqiyatli ommaga e’lon qilindi";
+    }
 
 
 
@@ -245,13 +328,4 @@ public class InstructorCourseService(IUnitOfWork unitOfWork,
         return true;
     }
 
-    public Task<string?> MakeActiveAsync(int courseId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<string?> MakeDeActiveAsync(int courseId)
-    {
-        throw new NotImplementedException();
-    }
 }
