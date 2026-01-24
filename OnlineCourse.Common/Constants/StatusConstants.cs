@@ -7,6 +7,8 @@ public static class StatusConstants
     public const int Updated = 6;
     public const int Deleted = 7;
     public const int Public = 13;
+    public const int UnPublic = 14;
+
 
 
     public const string ActiveName = "Active";
@@ -14,4 +16,6 @@ public static class StatusConstants
     public const string UpdatedName = "Updated";
     public const string DeletedName = "Deleted";
     public const string PublicName = "Public";
+    public const string UnPublicName = "Unpublic";
+
 }

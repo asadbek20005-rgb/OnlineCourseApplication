@@ -51,6 +51,16 @@ public class CourseController(IInstructorCourseService service) : BaseInstructor
     }
 
     [HttpPut("{courseId}")]
+    public async Task<IActionResult> MakeUnPublic(int courseId)
+    {
+        var result = await service.MakeUnPublicAsync(courseId);
+        if (service.IsValid) return Ok(result);
+
+        return BadRequest(service.ToErrorResponse());
+    }
+
+
+    [HttpPut("{courseId}")]
     public async Task<IActionResult> MakePublic(int courseId)
     {
         var result = await service.MakePublicAsync(courseId);

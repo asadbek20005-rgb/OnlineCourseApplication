@@ -261,12 +261,12 @@ public class InstructorCourseService(IUnitOfWork unitOfWork,
         }
 
 
-        course.StatusId = Public;
+        course.StatusId = UnPublic;
 
         unitOfWork.CourseRepository().Update(course);
         await unitOfWork.SaveChangesAsync();
 
-        return "Kurs muvaffaqiyatli ommaga e’lon qilindi";
+        return "Kurs muvaffaqiyatli ommaga bekor qilindi";
     }
 
 

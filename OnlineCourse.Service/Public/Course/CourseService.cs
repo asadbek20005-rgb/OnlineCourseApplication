@@ -1,4 +1,5 @@
 using Mapster;
+using Microsoft.EntityFrameworkCore;
 using OnlineCourse.Common.Dtos;
 using OnlineCourse.Common.Extensions;
 using OnlineCourse.Common.FilterOptions;
@@ -26,9 +27,24 @@ public class CourseService(IUnitOfWork unitOfWork) : StatusGenericHandler, ICour
         return result;
     }
 
-    public Task<CourseDto?> GetById(int courseID)
+    public async Task<CourseDto?> GetByIdAsync(int courseID)
     {
-        throw new NotImplementedException();
+        var course = await unitOfWork
+            .CourseRepository()
+            .GetAll(x => x.Status, x => x.Level, x => x.Category, x => x.Content)
+            .Where(x => x.StatusId == Public && x.Id == courseID)
+            .FirstOrDefaultAsync();
+
+
+        if (course is null)
+        {
+            AddError("Kurs topilmadi. Iltimos, keyinroq qayta urinib ko‘ring.");
+            return null;
+        }
+
+        var config = GetCustomConfig();
+
+        return course.MapToDto<Course, CourseDto>(config);
     }
 
     private TypeAdapterConfig GetCustomConfig()

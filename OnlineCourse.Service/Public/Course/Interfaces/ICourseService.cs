@@ -8,6 +8,6 @@ namespace OnlineCourse.Service.Public;
 public interface ICourseService : IStatusGeneric
 {
     PaginationModel<CourseDto> GetAll(CourseFilterOptions options);
-    Task<CourseDto?> GetById(int courseID);
+    Task<CourseDto?> GetByIdAsync(int courseID);
 }
 

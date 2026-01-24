@@ -15,4 +15,14 @@ public class CourseController(ICourseService courseService) : BasePublicControll
 
         return BadRequest(courseService.ToErrorResponse());
     }
+
+    [HttpGet("{courseId}")]
+    public async Task<IActionResult> GetById(int courseId)
+    {
+        var result = await courseService.GetByIdAsync(courseId);
+
+        if (courseService.IsValid) return Ok(result);
+
+        return BadRequest(courseService.ToErrorResponse());
+    }
 }
