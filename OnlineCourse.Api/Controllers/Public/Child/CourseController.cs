@@ -20,7 +20,7 @@ public class CourseController(ICourseService courseService) : BasePublicControll
     public async Task<IActionResult> GetById(int courseId)
     {
         var result = await courseService.GetByIdAsync(courseId);
-
+    
         if (courseService.IsValid) return Ok(result);
 
         return BadRequest(courseService.ToErrorResponse());

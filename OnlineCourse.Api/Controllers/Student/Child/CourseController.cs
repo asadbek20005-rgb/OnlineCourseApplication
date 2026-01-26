@@ -17,6 +17,16 @@ public class CourseController(IStudentCourseService studentCourseService) : Base
         return BadRequest(studentCourseService.ToErrorResponse());
     }
 
+    [HttpPost]
+    public async Task<IActionResult> GetUnEnrolledCourses(CourseFilterOptions options)
+    {
+        var result = await studentCourseService.GetUnEnrolledCourses(options);
+
+        if (studentCourseService.IsValid) return Ok(result);
+
+        return BadRequest(studentCourseService.ToErrorResponse());
+    }
+
 
     [HttpGet("{courseId}")]
     public async Task<IActionResult> GetById(int courseId)

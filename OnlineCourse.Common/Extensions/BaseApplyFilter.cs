@@ -25,7 +25,7 @@ public static class BaseApplyFilter
 
         query = query.OrderBy(options.HasSort()
             ? $"{options.SortBy} {options.OrderType}"
-            : $"Id {BaseFilterOptions.ORDER_TYPE_DESC}");
+            : $"Id {BaseFilterOptions.ORDER_TYPE_DESC}"); 
 
         // Pagination
 

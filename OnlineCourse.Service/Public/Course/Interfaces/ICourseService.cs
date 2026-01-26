@@ -9,5 +9,6 @@ public interface ICourseService : IStatusGeneric
 {
     PaginationModel<CourseDto> GetAll(CourseFilterOptions options);
     Task<CourseDto?> GetByIdAsync(int courseID);
+
 }
 

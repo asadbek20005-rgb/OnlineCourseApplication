@@ -199,7 +199,7 @@ public class LessonService(IUnitOfWork unitOfWork, IContentService contentServic
 
         return config;
     }
-
+    
     private async Task<Lesson?> GetLessonByIdAsync(int courseId,int id)
     {
         var lesson = await unitOfWork.LessonRepository()

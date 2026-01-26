@@ -30,7 +30,7 @@ public class StudentCourseService(IUnitOfWork unitOfWork, IUserHelper userHelper
             return null;
         }
 
-        if(await unitOfWork.UserCourseRepository().GetAll().Where(x => x.UserId == UserId && x.CourseId == courseId).AnyAsync())
+        if (await unitOfWork.UserCourseRepository().GetAll().Where(x => x.UserId == UserId && x.CourseId == courseId).AnyAsync())
         {
             AddError("Siz allaqachon kursga yozilib bo'lgansiz! ");
             return null;
@@ -72,6 +72,23 @@ public class StudentCourseService(IUnitOfWork unitOfWork, IUserHelper userHelper
         return result;
 
 
+    }
+    public async Task<PaginationModel<CourseDto>> GetUnEnrolledCourses(CourseFilterOptions options)
+    {
+        var courseIds = await unitOfWork.UserCourseRepository().GetAll().Where(x => x.UserId == UserId && x.IsActive)
+            .Select(x => x.CourseId)
+            .ToListAsync();
+
+        var coursesQuery = unitOfWork.CourseRepository().GetAll(x => x.Status, x => x.Category, x => x.Level)
+            .Where(x => !courseIds.Contains(x.Id) && x.StatusId == Public);
+        var (queryResult, totalCount) = coursesQuery.ApplyFilter(options);
+
+        var config = GetCustomConfig();
+
+        var course = queryResult.MapToDtos<OnlineCourse.Data.Entites.Course, CourseDto>(config)
+            .ToPaginationModel(options.Page, options.PageSize, totalCount);
+
+        return course;
     }
 
     public async Task<CourseDto?> GetByIdAsync(int courseId)
@@ -147,4 +164,6 @@ public class StudentCourseService(IUnitOfWork unitOfWork, IUserHelper userHelper
 
         return course;
     }
+
+
 }
