@@ -34,6 +34,9 @@ public class Course : BaseDateTime
     [Required]
     public string Curriculum { get; set; } = string.Empty;
 
+    [Column("rating")]
+    public decimal? Rating { get; set; }
+
     // Navigation Properties
 
     [ForeignKey(nameof(StatusId))]
@@ -58,6 +61,6 @@ public class Course : BaseDateTime
     public List<Comment>? Comments { get; set; }
 
     [InverseProperty(nameof(Review.Course))]
-    public List<Review>? Reviews { get; set; }
+    public List<Review>? Reviews { get; set; } 
 
 }

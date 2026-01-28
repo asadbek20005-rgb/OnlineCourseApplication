@@ -28,17 +28,6 @@ public class CourseController(IStudentCourseService studentCourseService) : Base
     }
 
 
-    [HttpGet("{courseId}")]
-    public async Task<IActionResult> GetById(int courseId)
-    {
-        var result = await studentCourseService.GetByIdAsync(courseId);
-
-        if (studentCourseService.IsValid) return Ok(result);
-
-        return BadRequest(studentCourseService.ToErrorResponse());
-    }
-
-
     [HttpPost]
     public async Task<IActionResult> Enroll(int courseId)
     {
@@ -60,4 +49,30 @@ public class CourseController(IStudentCourseService studentCourseService) : Base
         return BadRequest(studentCourseService.ToErrorResponse());
     }
 
+
+
+
+    [HttpGet("{courseId}")]
+    public async Task<IActionResult> GetById(int courseId)
+    {
+        var result = await studentCourseService.GetByIdAsync(courseId);
+
+        if (studentCourseService.IsValid) return Ok(result);
+
+        return BadRequest(studentCourseService.ToErrorResponse());
+    }
+
+
+
+
+
+    [HttpGet("{courseId}")]
+    public async Task<IActionResult> GetUnEnrolledCourseById(int courseId)
+    {
+        var result = await studentCourseService.GetUnEnrolledCourseById(courseId);
+
+        if (studentCourseService.IsValid) return Ok(result);
+
+        return BadRequest(studentCourseService.ToErrorResponse());
+    }
 }

@@ -11,4 +11,5 @@ public interface IContentService : IStatusGeneric
     Task<int?> UpdateContentForVideo(int id, IFormFile file);
     Task<(Stream, string)> GetContentForVideo(int id, string folderName,string url);
     Task<(Stream, string)> DownloadFileAsync(string url);
+    Task<int?> CreateOrUpdateContentForImage(int? contentId, IFormFile file);
 }

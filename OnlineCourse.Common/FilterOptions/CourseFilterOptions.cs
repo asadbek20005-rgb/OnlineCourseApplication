@@ -6,5 +6,6 @@ public class CourseFilterOptions : BaseFilterOptions
     public int? CategoryId { get; set; }
     public int? LevelId { get; set; }
     public string? Title { get; set; } 
+    public decimal? Rating { get; set; }
 
 }

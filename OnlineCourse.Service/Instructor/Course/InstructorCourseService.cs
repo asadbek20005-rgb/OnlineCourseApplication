@@ -23,7 +23,7 @@ public class InstructorCourseService(IUnitOfWork unitOfWork,
     : StatusGenericHandler, IInstructorCourseService
 {
     private Guid UserId => Guid.Parse(userHelper.GetUserId());
-    private readonly int[] Categories = [Commercial, Shop, Educate, Academy, Office];
+    private readonly int[] Categories = [Commercial, IT, Educate, Academy, Office];
     private readonly int[] Levels = [Beginner, Intermidiate, Expert];
 
 

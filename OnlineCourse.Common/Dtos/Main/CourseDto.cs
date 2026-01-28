@@ -9,4 +9,5 @@ public class CourseDto : BaseDateTimeDto
     public string CategoryName { get; set; } = null!;
     public string PhotoContentUrl { get; set; } = null!;
     public string LevelName { get; set; } = null!;
+    public int Rating { get; set; }
 }

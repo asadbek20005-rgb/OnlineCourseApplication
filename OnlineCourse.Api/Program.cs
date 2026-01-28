@@ -42,6 +42,7 @@ builder.Services.AddScoped<IStudentCourseService, StudentCourseService>();
 builder.Services.AddScoped<IStudentLessonService, StudentLessonService>();
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 
 builder.Services.AddHttpContextAccessor();
 

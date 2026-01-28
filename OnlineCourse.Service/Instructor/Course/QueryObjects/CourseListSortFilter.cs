@@ -43,6 +43,12 @@ public static class CourseListSortFilter
         }
 
 
+        if (options.Rating.HasValue)
+        {
+            query = query.Where(x => x.Rating.Equals(options.Rating));
+        }
+
+
         (query, int totalCount) = query.ApplyBaseFilter(
           options
       );

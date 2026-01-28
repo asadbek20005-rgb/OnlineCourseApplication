@@ -16,6 +16,7 @@ using static OnlineCourse.Common.Constants.StatusConstants;
 public class StudentCourseService(IUnitOfWork unitOfWork, IUserHelper userHelper) : StatusGenericHandler, IStudentCourseService
 {
     private Guid UserId => Guid.Parse(userHelper.GetUserId());
+   
     public async Task<string?> EnrollAsync(int courseId)
     {
         var id = await unitOfWork.CourseRepository()
@@ -59,6 +60,8 @@ public class StudentCourseService(IUnitOfWork unitOfWork, IUserHelper userHelper
             .Select(x => x.CourseId)
             .ToListAsync();
 
+       
+
         var query = unitOfWork.CourseRepository()
             .GetAll(x => x.Status, x => x.Category, x => x.Level)
             .Where(x => userCourseIds.Contains(x.Id) && x.StatusId != Deleted);
@@ -70,7 +73,6 @@ public class StudentCourseService(IUnitOfWork unitOfWork, IUserHelper userHelper
             .ToPaginationModel(options.Page, options.PageSize, totalCount);
 
         return result;
-
 
     }
     public async Task<PaginationModel<CourseDto>> GetUnEnrolledCourses(CourseFilterOptions options)
@@ -126,6 +128,23 @@ public class StudentCourseService(IUnitOfWork unitOfWork, IUserHelper userHelper
         return "Bekor qilindi!";
     }
 
+
+
+    public async Task<CourseDto?> GetUnEnrolledCourseById(int courseId)
+    {
+        var course = await unitOfWork.CourseRepository().GetAll(x => x.Content, x => x.Category, x => x.Level).Where(x => x.Id == courseId).FirstOrDefaultAsync();
+
+        if (course is null)
+        {
+            AddError("Kurs topilmadi");
+            return null;
+        }
+        var config = GetCustomConfig();
+
+
+        return course.MapToDto<Data.Entites.Course, CourseDto>(config);
+    }
+
     private TypeAdapterConfig GetCustomConfig()
     {
         var config = new TypeAdapterConfig();
@@ -134,6 +153,7 @@ public class StudentCourseService(IUnitOfWork unitOfWork, IUserHelper userHelper
             .Map(x => x.LevelName, x => x.Level.FullName)
             .Map(x => x.CategoryName, x => x.Category.FullName)
             .Map(x => x.PhotoContentUrl, x => x.Content.Url);
+
 
         return config;
 
@@ -164,6 +184,5 @@ public class StudentCourseService(IUnitOfWork unitOfWork, IUserHelper userHelper
 
         return course;
     }
-
 
 }

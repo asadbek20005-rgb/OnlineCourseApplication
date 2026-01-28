@@ -1,8 +1,10 @@
+using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OnlineCourse.Common.Dtos;
 using OnlineCourse.Common.Extensions;
 using OnlineCourse.Common.Models;
+using OnlineCourse.Common.Models.Auth;
 using OnlineCourse.Data.Entites;
 using OnlineCourse.Data.Repositories;
 using OnlineCourse.Service.Helpers;
@@ -14,7 +16,7 @@ using static OnlineCourse.Common.Constants.GenderConstants;
 using static OnlineCourse.Common.Constants.MinioFolderConstant;
 using static OnlineCourse.Common.Constants.RoleConstants;
 using static OnlineCourse.Common.Constants.StatusConstants;
-public class AuthService(IUnitOfWork unitOfWork, IJwtService jwtService, IContentService contentService) : StatusGenericHandler, IAuthService
+public class AuthService(IUnitOfWork unitOfWork, IJwtService jwtService, IContentService contentService, IUserHelper userHelper) : StatusGenericHandler, IAuthService
 {
     public async Task<TokenDto?> LoginAsync(LoginModel model)
     {
@@ -72,7 +74,6 @@ public class AuthService(IUnitOfWork unitOfWork, IJwtService jwtService, IConten
 
         return tokenDto;
     }
-
     public async Task<string?> RegisterAsync(CreateUserModel model)
     {
         await using var transaction = unitOfWork.BeginTransaction();
@@ -104,6 +105,50 @@ public class AuthService(IUnitOfWork unitOfWork, IJwtService jwtService, IConten
         }
     }
 
+    public async Task<UserDto?> GetProfileAsync()
+    {
+        var user = await GetUserAsync();
+
+        if (user == null) return null;
+
+        var config = GetCustomConfig();
+
+        return user.MapToDto<User, UserDto>(config);
+
+    }
+
+
+    public async Task<string?> UpdateProfileAsync(UpdateProfileModel model)
+    {
+        await using var transaction = unitOfWork.BeginTransaction();
+        try
+        {
+
+            var user = await GetUserAsync();
+
+            if (user == null) return null;
+
+            user = model.MapForUpdate(user);
+
+            if (model.PhotoContent is not null && model.PhotoContent.Length != 0)
+                user.PhotoContentId = await contentService.CreateOrUpdateContentForImage(user.PhotoContentId, model.PhotoContent);
+
+            unitOfWork.UserRepository().Update(user);
+            await unitOfWork.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+
+            return "Foydalanuvchi muvaffaqiyatli yangilandi!";
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            AddError("Server Error");
+            return null;
+        }
+    }
+
+
     private bool IsValidRole(int roleId)
     {
         if (roleId != InstructorRoleId && roleId != StudentRoleId)
@@ -114,7 +159,6 @@ public class AuthService(IUnitOfWork unitOfWork, IJwtService jwtService, IConten
 
         return true;
     }
-
     private async Task<bool> IsUserExistsAsync(string username, string email)
     {
         bool isExist = await unitOfWork.UserRepository()
@@ -149,17 +193,7 @@ public class AuthService(IUnitOfWork unitOfWork, IJwtService jwtService, IConten
                 return false;
             }
         }
-        // Username bo‘lsa
-        else
-        {
-            var result = IsValidUsername(emailOrUsername);
-            if (!result)
-            {
-                AddError("Username noto‘g‘ri formatda (3–30 belgi, faqat harf va raqam)");
-                return false;
-            }
-        }
-
+        
         return true;
     }
     private static bool IsValidEmail(string email)
@@ -174,10 +208,29 @@ public class AuthService(IUnitOfWork unitOfWork, IJwtService jwtService, IConten
             return false;
         }
     }
-    private static bool IsValidUsername(string username)
+
+    private async Task<User?> GetUserAsync()
     {
-        // 3–30 ta belgi, faqat harf, raqam va underscore
-        return Regex.IsMatch(username, @"^[a-zA-Z0-9_]{3,30}$");
+        var userId = Guid.Parse(userHelper.GetUserId());
+
+        var user = await unitOfWork.UserRepository().GetAll(x => x.PhotoContent).Where(x => x.Id == userId).SingleAsync();
+        if (user is null)
+        {
+            AddError("Foydalanuvchi topilmadi");
+            return null;
+        }
+
+        return user;
     }
+
+    private TypeAdapterConfig GetCustomConfig()
+    {
+        var config = new TypeAdapterConfig();
+        config.NewConfig<User, UserDto>()
+            .Map(dest => dest.PhotoUrl, src => src.PhotoContent.Url);
+
+        return config;
+    }
+
 
 }

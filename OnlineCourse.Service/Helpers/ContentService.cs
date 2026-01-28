@@ -8,6 +8,7 @@ using StatusGeneric;
 
 namespace OnlineCourse.Service.Helpers;
 using static OnlineCourse.Common.Constants.ContentTypeConstant;
+using static OnlineCourse.Common.Constants.MinioFolderConstant;
 public class ContentService(IMinioService minioService, IUnitOfWork unitOfWork) : StatusGenericHandler, IContentService
 {
 
@@ -162,13 +163,13 @@ public class ContentService(IMinioService minioService, IUnitOfWork unitOfWork) 
             return false;
         }
 
-        const long maxFileSizeInMb = 5;
-        long maxSize = maxFileSizeInMb * 1024 * 1024;
-        if (file.Length > maxSize)
-        {
-            AddError("File hajmi 5MB katta bo'lmasligi kerak");
-            return false;
-        }
+        //const long maxFileSizeInMb = 5;
+        //long maxSize = maxFileSizeInMb * 1024 * 1024;
+        //if (file.Length > maxSize)
+        //{
+        //    AddError("File hajmi 5MB katta bo'lmasligi kerak");
+        //    return false;
+        //}
 
         if (!_permittedMimeTypes.Contains(file.ContentType.ToLower()))
         {
@@ -260,7 +261,19 @@ public class ContentService(IMinioService minioService, IUnitOfWork unitOfWork) 
             return (Stream.Null, string.Empty);
         }
 
-         return await minioService.DownloadFileAsync(folderName: content.FolderName, fileName: content.Url);
+        return await minioService.DownloadFileAsync(folderName: content.FolderName, fileName: content.Url);
 
+    }
+
+    public async Task<int?> CreateOrUpdateContentForImage(int? contentId, IFormFile file)
+    {
+        if (contentId.HasValue)
+        {
+            return await UpdateContentForImage(contentId.Value, file);
+        }
+        else
+        {
+            return await CreateContentForImage(file, UserImages);
+        }
     }
 }

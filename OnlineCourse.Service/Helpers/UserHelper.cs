@@ -5,6 +5,6 @@ namespace OnlineCourse.Service.Helpers;
 
 public class UserHelper(IHttpContextAccessor httpContextAccessor) : IUserHelper
 {
-    public string GetUserId() => httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+    public string GetUserId() => httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
 }
