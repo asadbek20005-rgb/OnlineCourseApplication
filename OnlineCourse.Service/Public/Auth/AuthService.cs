@@ -232,5 +232,8 @@ public class AuthService(IUnitOfWork unitOfWork, IJwtService jwtService, IConten
         return config;
     }
 
-
+    public Task<string?> ForgotPassword()
+    {
+        throw new NotImplementedException();
+    }
 }
