@@ -15,4 +15,4 @@ public class CreateLessonModel
     public string Title { get; set; } = null!;
 
     public string? Description { get; set; } = string.Empty;
-}
+}   

@@ -157,7 +157,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AppCorsPolicy", policy =>
     {
-        policy.WithOrigins(allowedOrigins!)
+        policy.AllowAnyOrigin()
         .AllowAnyHeader()
         .AllowAnyMethod();
     });

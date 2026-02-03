@@ -276,8 +276,8 @@ public class InstructorCourseService(IUnitOfWork unitOfWork,
         var config = new TypeAdapterConfig();
         config.NewConfig<Data.Entites.Course, CourseDto>()
             .Map(x => x.StatusName, x => x.Status.FullName)
-            .Map(x => x.LevelName, x => x.Level.FullName)
-            .Map(x => x.CategoryName, x => x.Category.FullName)
+            .Map(x => x.LevelName, x => x.Level.ShortName)
+            .Map(x => x.CategoryName, x => x.Category.ShortName)
             .Map(x => x.PhotoContentUrl, x => x.Content.Url);
 
         return config;
