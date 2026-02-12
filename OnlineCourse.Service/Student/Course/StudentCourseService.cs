@@ -16,7 +16,7 @@ using static OnlineCourse.Common.Constants.StatusConstants;
 public class StudentCourseService(IUnitOfWork unitOfWork, IUserHelper userHelper) : StatusGenericHandler, IStudentCourseService
 {
     private Guid UserId => Guid.Parse(userHelper.GetUserId());
-   
+
     public async Task<string?> EnrollAsync(int courseId)
     {
         var id = await unitOfWork.CourseRepository()
@@ -60,7 +60,7 @@ public class StudentCourseService(IUnitOfWork unitOfWork, IUserHelper userHelper
             .Select(x => x.CourseId)
             .ToListAsync();
 
-       
+
 
         var query = unitOfWork.CourseRepository()
             .GetAll(x => x.Status, x => x.Category, x => x.Level)
@@ -128,8 +128,6 @@ public class StudentCourseService(IUnitOfWork unitOfWork, IUserHelper userHelper
         return "Bekor qilindi!";
     }
 
-
-
     public async Task<CourseDto?> GetUnEnrolledCourseById(int courseId)
     {
         var course = await unitOfWork.CourseRepository().GetAll(x => x.Content, x => x.Category, x => x.Level).Where(x => x.Id == courseId).FirstOrDefaultAsync();
@@ -185,4 +183,30 @@ public class StudentCourseService(IUnitOfWork unitOfWork, IUserHelper userHelper
         return course;
     }
 
+    public async Task<UserDto?> GetInstructorInfoAsync(int courseId)
+    {
+        var userId = await unitOfWork.UserCourseRepository().GetAll().Where(x => x.CourseId == courseId).Select(x => x.UserId).FirstOrDefaultAsync();
+
+        var user = await unitOfWork.UserRepository().GetAll(x => x.PhotoContent).Where(x => x.Id == userId).FirstOrDefaultAsync();
+        if (user is null)
+        {
+            AddError("Foydalanuvchi topilmadi!");
+            return null;
+        }
+
+        var config = ConfigForUser();
+
+        return user.MapToDto<User, UserDto>(config);
+    }
+
+
+    private TypeAdapterConfig ConfigForUser()
+    {
+        var config = new TypeAdapterConfig();
+
+        config.NewConfig<User, UserDto>()
+            .Map(dest => dest.PhotoUrl, src => src.PhotoContent.Url);
+
+        return config;
+    }
 }

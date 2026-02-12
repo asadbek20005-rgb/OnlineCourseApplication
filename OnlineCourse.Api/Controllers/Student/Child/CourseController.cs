@@ -75,4 +75,13 @@ public class CourseController(IStudentCourseService studentCourseService) : Base
 
         return BadRequest(studentCourseService.ToErrorResponse());
     }
+
+    [HttpGet("{courseId}")]
+    public async Task<IActionResult> GetInstructorInfo(int courseId)
+    {
+        var result = await studentCourseService.GetInstructorInfoAsync(courseId);
+        if (studentCourseService.IsValid) return Ok(result);
+        return BadRequest(studentCourseService.ToErrorResponse());
+    }
+
 }

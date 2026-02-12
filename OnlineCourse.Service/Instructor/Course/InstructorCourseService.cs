@@ -64,8 +64,6 @@ public class InstructorCourseService(IUnitOfWork unitOfWork,
             await transaction.RollbackAsync();
             throw new Exception(ex.Message);
         }
-
-
     }
 
     public async Task<PaginationModel<CourseDto>> GetAllAsync(CourseFilterOptions options)

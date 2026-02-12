@@ -13,4 +13,5 @@ public interface IStudentCourseService : IStatusGeneric
     Task<CourseDto?> GetUnEnrolledCourseById(int courseId); 
     Task<string?> EnrollAsync(int courseId);
     Task<string?> UnEnrollAsync(int courseId);
+    Task<UserDto?> GetInstructorInfoAsync(int courseId);
 }

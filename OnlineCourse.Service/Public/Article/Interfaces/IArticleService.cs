@@ -1,6 +1,10 @@
+using OnlineCourse.Common.Dtos;
+using OnlineCourse.Common.Models;
+using StatusGeneric;
+
 namespace OnlineCourse.Service.Public.Article.Interfaces;
 
-public interface IArticleService
+public interface IArticleService : IStatusGeneric
 {
-    // Articles CRUD
+    Task<PaginationModel<ArticleDto>> GetAllAsync();
 }
